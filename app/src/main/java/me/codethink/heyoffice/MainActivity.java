@@ -14,19 +14,16 @@ import android.view.MenuItem;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String ALARM_ACTION = "me.codethink.heioffice.alarm";
+    public static final String ALARM_ACTION = "me.codethink.heioffice.alarm";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        final Intent intent = new Intent();
-        intent.setAction(ALARM_ACTION);
+        AlarmCenter.startUp(this);
+        AlarmCenter.get().start();
 
-        final PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pendingIntent);
     }
 
     @Override

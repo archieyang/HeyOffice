@@ -1,16 +1,19 @@
 package me.codethink.heyoffice;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 /**
  * Created by archie on 15/8/23.
@@ -19,6 +22,11 @@ public class AlarmService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.v("ar_log", intent.getStringExtra(MainActivity.ALARM_ACTION));
+
+        SharedPreferences sharedPreferences = getSharedPreferences("alarmd", MODE_PRIVATE);
+
+
         Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         if (alarmUri == null) {
             alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
@@ -27,6 +35,15 @@ public class AlarmService extends Service {
         ringtone.play();
         
         showNotification();
+
+        int current = sharedPreferences.getInt("times", 0);
+        ++ current;
+        sharedPreferences.edit().putInt("times", current).apply();
+        Log.v("ar_log", "cancel" + current);
+        if (current == 5) {
+            Log.v("ar_log", "cancel");
+            AlarmCenter.get().cancel();
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
