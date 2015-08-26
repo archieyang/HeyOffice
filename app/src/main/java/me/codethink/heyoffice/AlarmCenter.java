@@ -9,35 +9,39 @@ import android.content.Intent;
  * Created by archie on 15/8/25.
  */
 public class AlarmCenter {
+    public static final String ALARM_ACTION = "me.codethink.heyoffice.alarm";
+    public static final String CANCEL_TIME_DATA = "cancel-time-date";
+
     private static AlarmCenter mSingleton = null;
-    private static AlarmManager mInstance = null;
-    private static Context mContext = null;
+    private final AlarmManager mAlarmManager;
+    private final  Context mContext;
     private PendingIntent pi = null;
 
-    public static void startUp(Context context) {
+    private AlarmCenter(Context context) {
         mContext = context;
-        mInstance = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    }
 
-        mSingleton = new AlarmCenter();
-
+    public static void startUp(Context context) {
+        mSingleton = new AlarmCenter(context);
     }
 
     public static AlarmCenter get() {
         return mSingleton;
     }
 
-    public void start() {
+    public void setAlarm(long startInMillis, long endInMillis, long intervalInMillis) {
 
-        mContext.getSharedPreferences("alarmd", Context.MODE_PRIVATE).edit().putInt("times", 0).apply();
         final Intent intent = new Intent();
-        intent.setAction(MainActivity.ALARM_ACTION);
-        intent.putExtra(MainActivity.ALARM_ACTION, "Hey office!");
+        intent.setAction(ALARM_ACTION);
+        intent.putExtra(CANCEL_TIME_DATA, endInMillis - intervalInMillis);
 
         pi = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mInstance.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, 5000, pi);
+        mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startInMillis, intervalInMillis, pi);
+
     }
 
     public void cancel() {
-        mInstance.cancel(pi);
+        mAlarmManager.cancel(pi);
     }
 }

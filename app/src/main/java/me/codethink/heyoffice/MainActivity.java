@@ -1,20 +1,12 @@
 package me.codethink.heyoffice;
 
-import android.app.AlarmManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.Calendar;
-
 public class MainActivity extends AppCompatActivity {
-    public static final String ALARM_ACTION = "me.codethink.heioffice.alarm";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         AlarmCenter.startUp(this);
-        AlarmCenter.get().start();
+        AlarmCenter.get().setAlarm(System.currentTimeMillis(), System.currentTimeMillis() + 30000, 6000);
 
     }
 
