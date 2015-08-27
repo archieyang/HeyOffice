@@ -2,20 +2,68 @@ package me.codethink.heyoffice;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
+    @Bind(R.id.alarm_list)
+    RecyclerView mAlarmList;
+
+    RecyclerView.Adapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ButterKnife.bind(this);
+
+        mAlarmList.setLayoutManager(new LinearLayoutManager(this));
+
+        mAdapter = new RecyclerView.Adapter() {
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+                return new AlarmItemViewHolder(LayoutInflater.from(getBaseContext()).inflate(R.layout.view_item, viewGroup, false));
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
+                ((AlarmItemViewHolder) viewHolder).simpleText.setText("Dummy Text " + i);
+            }
+
+            @Override
+            public int getItemCount() {
+                return 10;
+            }
+
+
+        };
+
+        mAlarmList.setAdapter(mAdapter);
+
         AlarmCenter.startUp(this);
         AlarmCenter.get().setAlarm(System.currentTimeMillis(), System.currentTimeMillis() + 30000, 6000);
 
+
+    }
+
+    private final class AlarmItemViewHolder extends RecyclerView.ViewHolder {
+        private TextView simpleText;
+
+        public AlarmItemViewHolder(View itemView) {
+            super(itemView);
+            simpleText = (TextView) itemView.findViewById(R.id.item_text);
+        }
     }
 
     @Override
