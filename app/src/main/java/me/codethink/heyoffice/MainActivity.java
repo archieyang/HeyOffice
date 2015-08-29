@@ -11,8 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +24,18 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView mAlarmList;
 
     RecyclerView.Adapter mAdapter;
+
+
+    @OnClick(R.id.set_time)
+    public void setTimeClicked() {
+        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(RadialPickerLayout radialPickerLayout, int i, int i1) {
+
+            }
+        }, 3, 5, false);
+        timePickerDialog.show(getFragmentManager(), "Time Picker Dialog");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
