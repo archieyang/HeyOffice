@@ -62,10 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mActionBarDrawerToggle.syncState();
-
-
+        
         mAlarmList.setLayoutManager(new LinearLayoutManager(this));
 
         mAdapter = new RecyclerView.Adapter() {
@@ -96,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onPostCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onPostCreate(savedInstanceState, persistentState);
+    public void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
         mActionBarDrawerToggle.syncState();
     }
 
