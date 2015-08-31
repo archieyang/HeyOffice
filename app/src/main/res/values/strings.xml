@@ -3,4 +3,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="menu_drawer_today">今日</string>
+    <string name="menu_drawer_month">本月</string>
 </resources>

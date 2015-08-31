@@ -3,28 +3,16 @@ package me.codethink.heyoffice;
 import android.app.Fragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import rx.internal.operators.OperatorSwitchIfEmpty;
 
 public class MainActivity extends AppCompatActivity {
     @Bind(R.id.toolbar)
@@ -34,32 +22,14 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
 
-//    @Bind(R.id.alarm_list)
-//    RecyclerView mAlarmList;
-
     @Bind(R.id.navigation_view)
     NavigationView mNavigationView;
-
-    RecyclerView.Adapter mAdapter;
-
-
-//    @OnClick(R.id.set_time)
-//    public void setTimeClicked() {
-//        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
-//            @Override
-//            public void onTimeSet(RadialPickerLayout radialPickerLayout, int i, int i1) {
-//
-//            }
-//        }, 3, 5, false);
-//        timePickerDialog.show(getFragmentManager(), "Show TimePickerDialog");
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
 
         setSupportActionBar(mToolbar);
 
@@ -68,30 +38,15 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
-//        mAlarmList.setLayoutManager(new LinearLayoutManager(this));
 
-        mAdapter = new RecyclerView.Adapter() {
-            @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-                return new AlarmItemViewHolder(LayoutInflater.from(getBaseContext()).inflate(R.layout.view_item, viewGroup, false));
-            }
+        initNavigationView();
 
-            @Override
-            public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
-                ((AlarmItemViewHolder) viewHolder).simpleText.setText("Dummy Text " + i);
-            }
+//        AlarmCenter.startUp(this);
+//        AlarmCenter.get().setAlarm(System.currentTimeMillis(), System.currentTimeMillis() + 30000, 6000);
 
-            @Override
-            public int getItemCount() {
-                return 10;
-            }
+    }
 
-
-        };
-
-//        mAlarmList.setAdapter(mAdapter);
-
+    private void initNavigationView() {
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -100,15 +55,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
             private void selectDrawerItem(MenuItem menuItem) {
-
                 Class fragmentClass = null;
+
                 switch (menuItem.getItemId()) {
-                    case R.id.nav_first_fragment:
+                    case R.id.day_view:
                         fragmentClass = DayFragment.class;
                         break;
 
-                    case R.id.nav_second_fragment:
-                    case R.id.nav_third_fragment:
+                    case R.id.month_view:
                         fragmentClass = MonthFragment.class;
                         break;
 
@@ -124,16 +78,21 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
-                getFragmentManager().beginTransaction().replace(R.id.rootLayout, fragment).commit();
+                getFragmentManager().beginTransaction().replace(R.id.root_layout, fragment).commit();
 
                 menuItem.setChecked(true);
                 mDrawerLayout.closeDrawers();
             }
         });
 
-//        AlarmCenter.startUp(this);
-//        AlarmCenter.get().setAlarm(System.currentTimeMillis(), System.currentTimeMillis() + 30000, 6000);
-
+        try {
+            getFragmentManager().beginTransaction().replace(R.id.root_layout, DayFragment.class.newInstance()).commit();
+            mNavigationView.setCheckedItem(R.id.day_view);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -146,15 +105,6 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mActionBarDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    private final class AlarmItemViewHolder extends RecyclerView.ViewHolder {
-        private TextView simpleText;
-
-        public AlarmItemViewHolder(View itemView) {
-            super(itemView);
-            simpleText = (TextView) itemView.findViewById(R.id.item_text);
-        }
     }
 
     @Override
