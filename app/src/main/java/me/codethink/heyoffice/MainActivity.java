@@ -1,8 +1,10 @@
 package me.codethink.heyoffice;
 
+import android.app.Fragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +24,7 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.internal.operators.OperatorSwitchIfEmpty;
 
 public class MainActivity extends AppCompatActivity {
     @Bind(R.id.toolbar)
@@ -31,22 +34,25 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
 
-    @Bind(R.id.alarm_list)
-    RecyclerView mAlarmList;
+//    @Bind(R.id.alarm_list)
+//    RecyclerView mAlarmList;
+
+    @Bind(R.id.navigation_view)
+    NavigationView mNavigationView;
 
     RecyclerView.Adapter mAdapter;
 
 
-    @OnClick(R.id.set_time)
-    public void setTimeClicked() {
-        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(RadialPickerLayout radialPickerLayout, int i, int i1) {
-
-            }
-        }, 3, 5, false);
-        timePickerDialog.show(getFragmentManager(), "Show TimePickerDialog");
-    }
+//    @OnClick(R.id.set_time)
+//    public void setTimeClicked() {
+//        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
+//            @Override
+//            public void onTimeSet(RadialPickerLayout radialPickerLayout, int i, int i1) {
+//
+//            }
+//        }, 3, 5, false);
+//        timePickerDialog.show(getFragmentManager(), "Show TimePickerDialog");
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
-        mAlarmList.setLayoutManager(new LinearLayoutManager(this));
+//        mAlarmList.setLayoutManager(new LinearLayoutManager(this));
 
         mAdapter = new RecyclerView.Adapter() {
             @Override
@@ -84,11 +90,49 @@ public class MainActivity extends AppCompatActivity {
 
         };
 
-        mAlarmList.setAdapter(mAdapter);
+//        mAlarmList.setAdapter(mAdapter);
 
-        AlarmCenter.startUp(this);
-        AlarmCenter.get().setAlarm(System.currentTimeMillis(), System.currentTimeMillis() + 30000, 6000);
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                selectDrawerItem(menuItem);
+                return true;
+            }
 
+            private void selectDrawerItem(MenuItem menuItem) {
+
+                Class fragmentClass = null;
+                switch (menuItem.getItemId()) {
+                    case R.id.nav_first_fragment:
+                        fragmentClass = DayFragment.class;
+                        break;
+
+                    case R.id.nav_second_fragment:
+                    case R.id.nav_third_fragment:
+                        fragmentClass = MonthFragment.class;
+                        break;
+
+                    default:
+                        fragmentClass = DayFragment.class;
+                }
+
+                Fragment fragment = null;
+                try {
+                    fragment = (Fragment) fragmentClass.newInstance();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                getFragmentManager().beginTransaction().replace(R.id.rootLayout, fragment).commit();
+
+                menuItem.setChecked(true);
+                mDrawerLayout.closeDrawers();
+            }
+        });
+
+//        AlarmCenter.startUp(this);
+//        AlarmCenter.get().setAlarm(System.currentTimeMillis(), System.currentTimeMillis() + 30000, 6000);
 
     }
 
