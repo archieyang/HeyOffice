@@ -58,7 +58,7 @@ public class DayFragment extends Fragment {
 
             @Override
             public int getItemCount() {
-                return 10;
+                return 100;
             }
 
             final class AlarmItemViewHolder extends RecyclerView.ViewHolder {
