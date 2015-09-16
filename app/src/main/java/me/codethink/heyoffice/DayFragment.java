@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.util.ArrayList;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -45,6 +47,8 @@ public class DayFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         mAlarmList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        final ArrayList<Long> alarms = AlarmCenter.get().getAlarmTime();
+
         mAdapter = new RecyclerView.Adapter(){
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -53,12 +57,12 @@ public class DayFragment extends Fragment {
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
-                ((AlarmItemViewHolder) viewHolder).simpleText.setText("Dummy Text " + i);
+                ((AlarmItemViewHolder) viewHolder).simpleText.setText("AlarmTime " + alarms.get(i));
             }
 
             @Override
             public int getItemCount() {
-                return 100;
+                return alarms.size();
             }
 
             final class AlarmItemViewHolder extends RecyclerView.ViewHolder {

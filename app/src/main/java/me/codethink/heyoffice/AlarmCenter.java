@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import java.util.ArrayList;
+
 /**
  * Created by archie on 15/8/25.
  */
@@ -16,6 +18,7 @@ public class AlarmCenter {
     private final AlarmManager mAlarmManager;
     private final  Context mContext;
     private PendingIntent pi = null;
+    private ArrayList<Long> mAlarmTime = new ArrayList<Long>();
 
     private AlarmCenter(Context context) {
         mContext = context;
@@ -39,6 +42,13 @@ public class AlarmCenter {
         pi = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startInMillis, intervalInMillis, pi);
 
+        for(long time = startInMillis; time < endInMillis; time += intervalInMillis) {
+            mAlarmTime.add(time);
+        }
+    }
+
+    public ArrayList<Long> getAlarmTime() {
+        return mAlarmTime;
     }
 
     public void cancel() {
