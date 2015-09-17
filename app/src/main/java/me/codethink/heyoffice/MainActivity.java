@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         initNavigationView();
 
         AlarmCenter.startUp(this);
-        AlarmCenter.get().setAlarm(System.currentTimeMillis(), System.currentTimeMillis() + 30000, 6000);
+        AlarmCenter.get().setAlarm(System.currentTimeMillis(), System.currentTimeMillis() + 24 * 60 * 60 * 1000, 60 * 60 * 1000);
 
     }
 

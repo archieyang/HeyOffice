@@ -14,7 +14,9 @@ import android.widget.TextView;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -57,7 +59,7 @@ public class DayFragment extends Fragment {
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
-                ((AlarmItemViewHolder) viewHolder).simpleText.setText("AlarmTime " + alarms.get(i));
+                ((AlarmItemViewHolder) viewHolder).simpleText.setText("AlarmTime " + getDate(alarms.get(i)));
             }
 
             @Override
@@ -74,11 +76,20 @@ public class DayFragment extends Fragment {
                 }
             }
 
+            String getDate(long milliSeconds) {
+                SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
+
+                // Create a calendar object that will convert the date and time value in milliseconds to date.
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(milliSeconds);
+                return formatter.format(calendar.getTime());
+            }
 
         };
         mAlarmList.setAdapter(mAdapter);
 
         return view;
+
     }
 
 
