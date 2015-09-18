@@ -33,8 +33,9 @@ public class DayFragment extends Fragment {
     public void setTimeClicked() {
         TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
             @Override
-            public void onTimeSet(RadialPickerLayout radialPickerLayout, int i, int i1) {
-
+            public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
+                AlarmManager.get().addAlarm(hour, minute);
+                mAdapter.notifyDataSetChanged();
             }
         }, 3, 5, false);
         timePickerDialog.show(getFragmentManager(), "Show TimePickerDialog");
@@ -49,7 +50,7 @@ public class DayFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         mAlarmList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        final ArrayList<Long> alarms = AlarmCenter.get().getAlarmTime();
+        final ArrayList<Alarm> alarms = AlarmManager.get().getAlarmTime();
 
         mAdapter = new RecyclerView.Adapter(){
             @Override
@@ -59,7 +60,7 @@ public class DayFragment extends Fragment {
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
-                ((AlarmItemViewHolder) viewHolder).simpleText.setText("AlarmTime " + getDate(alarms.get(i)));
+                ((AlarmItemViewHolder) viewHolder).simpleText.setText(alarms.get(i).getFormattedAlarmTime());
             }
 
             @Override
@@ -74,15 +75,6 @@ public class DayFragment extends Fragment {
                     super(itemView);
                     simpleText = (TextView) itemView.findViewById(R.id.item_text);
                 }
-            }
-
-            String getDate(long milliSeconds) {
-                SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
-
-                // Create a calendar object that will convert the date and time value in milliseconds to date.
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(milliSeconds);
-                return formatter.format(calendar.getTime());
             }
 
         };

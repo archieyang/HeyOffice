@@ -28,8 +28,8 @@ public class AlarmService extends Service {
         
         showNotification();
 
-        if (System.currentTimeMillis() > intent.getLongExtra(AlarmCenter.CANCEL_TIME_DATA, -1)) {
-            AlarmCenter.get().cancel();
+        if (System.currentTimeMillis() > intent.getLongExtra(AlarmManager.CANCEL_TIME_DATA, -1)) {
+            AlarmManager.get().cancel();
         }
 
         return super.onStartCommand(intent, flags, startId);
