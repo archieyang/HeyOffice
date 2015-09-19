@@ -1,9 +1,11 @@
 package me.codethink.heyoffice;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by archie on 15/9/18.
@@ -17,11 +19,15 @@ public class Alarm implements Comparable<Alarm>{
         mHour = hour;
         mMinute = minute;
 
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = GregorianCalendar.getInstance();
         calendar.setTime(new Date());
-        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), mHour, mMinute);
+        calendar.set(Calendar.HOUR_OF_DAY, mHour);
+        calendar.set(Calendar.MINUTE, mMinute);
+        calendar.set(Calendar.SECOND, 0);
 
         timeInMillis = calendar.getTimeInMillis();
+        Log.v("ar_log", timeInMillis + " calc");
+        Log.v("ar_log", System.currentTimeMillis() + " now");
     }
 
     public String getFormattedAlarmTime() {

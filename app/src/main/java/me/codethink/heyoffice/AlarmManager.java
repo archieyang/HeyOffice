@@ -11,7 +11,7 @@ import java.util.Collections;
  * Created by archie on 15/8/25.
  */
 public class AlarmManager {
-    public static final String ALARM_ACTION = "me.codethink.heyoffice.alarm";
+    public static final String ALARM_ALERT_ACTION = "me.codethink.heyoffice.alarm";
     public static final String CANCEL_TIME_DATA = "cancel-time-date";
 
     private static AlarmManager mSingleton = null;
@@ -33,19 +33,16 @@ public class AlarmManager {
         return mSingleton;
     }
 
-    public void setAlarm(long startInMillis, long endInMillis, long intervalInMillis) {
-
-        final Intent intent = new Intent();
-        intent.setAction(ALARM_ACTION);
-        intent.putExtra(CANCEL_TIME_DATA, endInMillis - intervalInMillis);
-
-        pi = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mAlarmManager.setRepeating(android.app.AlarmManager.RTC_WAKEUP, startInMillis, intervalInMillis, pi);
-    }
-
     public void addAlarm(int hour, int minute) {
-        mAlarms.add(new Alarm(hour, minute));
+        Alarm alarm = new Alarm(hour, minute);
+        mAlarms.add(alarm);
         Collections.sort(mAlarms);
+
+        Intent intent = new Intent(ALARM_ALERT_ACTION);
+        PendingIntent sender = PendingIntent.getBroadcast(
+                mContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        mAlarmManager.set(android.app.AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), sender);
+
     }
 
     public ArrayList<Alarm> getAlarmTime() {

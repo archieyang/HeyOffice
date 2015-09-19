@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         initNavigationView();
 
         AlarmManager.startUp(this);
-        AlarmManager.get().setAlarm(System.currentTimeMillis(), System.currentTimeMillis() + 24 * 60 * 60 * 1000, 60 * 60 * 1000);
 
     }
 
