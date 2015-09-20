@@ -6,6 +6,10 @@ import android.content.Intent;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+
+import me.codethink.heyoffice.data.Database;
+import me.codethink.heyoffice.greendao.AlarmDataItem;
 
 /**
  * Created by archie on 15/8/25.
@@ -18,7 +22,7 @@ public class AlarmManager {
     private final android.app.AlarmManager mAlarmManager;
     private final  Context mContext;
     private PendingIntent pi = null;
-    private ArrayList<Alarm> mAlarms = new ArrayList<Alarm>();
+    private List<Alarm> mAlarms = new ArrayList<Alarm>();;
 
     private AlarmManager(Context context) {
         mContext = context;
@@ -34,18 +38,27 @@ public class AlarmManager {
     }
 
     public void addAlarm(int hour, int minute) {
-        Alarm alarm = new Alarm(hour, minute);
-        mAlarms.add(alarm);
-        Collections.sort(mAlarms);
+
+
+        AlarmDataItem alarmDataItem = new AlarmDataItem(null, hour, minute);
+
+        Database.get().getSession().insert(alarmDataItem);
+
 
         Intent intent = new Intent(ALARM_ALERT_ACTION);
         PendingIntent sender = PendingIntent.getBroadcast(
                 mContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        mAlarmManager.set(android.app.AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), sender);
+        mAlarmManager.set(android.app.AlarmManager.RTC_WAKEUP, new Alarm(alarmDataItem).getTimeInMillis(), sender);
 
     }
 
-    public ArrayList<Alarm> getAlarmTime() {
+    public List<Alarm> getAlarmTime() {
+        mAlarms.clear();
+        List<AlarmDataItem> alarmDataItems = Database.get().getSession().getAlarmDataItemDao().queryBuilder().list();
+        for(AlarmDataItem item : alarmDataItems) {
+            mAlarms.add(new Alarm(item));
+        }
+        Collections.sort(mAlarms);
         return mAlarms;
     }
 

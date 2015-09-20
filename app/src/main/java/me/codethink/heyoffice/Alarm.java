@@ -1,11 +1,12 @@
 package me.codethink.heyoffice;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import me.codethink.heyoffice.greendao.AlarmDataItem;
 
 /**
  * Created by archie on 15/9/18.
@@ -15,9 +16,9 @@ public class Alarm implements Comparable<Alarm>{
     private final int mMinute;
     private final long timeInMillis;
 
-    public Alarm(int hour, int minute) {
-        mHour = hour;
-        mMinute = minute;
+    public Alarm(AlarmDataItem alarmDataItem) {
+        mHour = alarmDataItem.getHour();
+        mMinute = alarmDataItem.getMinute();
 
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.setTime(new Date());
@@ -26,8 +27,6 @@ public class Alarm implements Comparable<Alarm>{
         calendar.set(Calendar.SECOND, 0);
 
         timeInMillis = calendar.getTimeInMillis();
-        Log.v("ar_log", timeInMillis + " calc");
-        Log.v("ar_log", System.currentTimeMillis() + " now");
     }
 
     public String getFormattedAlarmTime() {

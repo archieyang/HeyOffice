@@ -14,9 +14,8 @@ import android.widget.TextView;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -35,6 +34,8 @@ public class DayFragment extends Fragment {
             @Override
             public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
                 AlarmManager.get().addAlarm(hour, minute);
+                alarms.clear();
+                alarms.addAll(AlarmManager.get().getAlarmTime());
                 mAdapter.notifyDataSetChanged();
             }
         }, 3, 5, false);
@@ -42,6 +43,7 @@ public class DayFragment extends Fragment {
     }
 
     RecyclerView.Adapter mAdapter;
+    List<Alarm> alarms = new ArrayList<Alarm>();
 
     @Nullable
     @Override
@@ -50,7 +52,7 @@ public class DayFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         mAlarmList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        final ArrayList<Alarm> alarms = AlarmManager.get().getAlarmTime();
+        alarms.addAll(AlarmManager.get().getAlarmTime());
 
         mAdapter = new RecyclerView.Adapter(){
             @Override
