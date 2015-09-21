@@ -1,4 +1,4 @@
-package me.codethink.heyoffice;
+package me.codethink.heyoffice.ui;
 
 import android.app.Fragment;
 import android.content.res.Configuration;
@@ -13,6 +13,8 @@ import android.view.MenuItem;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import me.codethink.heyoffice.AlarmStore;
+import me.codethink.heyoffice.R;
 
 public class MainActivity extends AppCompatActivity {
     @Bind(R.id.toolbar)
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         initNavigationView();
 
-        AlarmManager.startUp(this);
+        AlarmStore.startUp(this);
 
     }
 

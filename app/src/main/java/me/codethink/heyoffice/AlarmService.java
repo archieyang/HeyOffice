@@ -12,6 +12,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
+import me.codethink.heyoffice.ui.MainActivity;
+
 /**
  * Created by archie on 15/8/23.
  */
@@ -28,8 +30,8 @@ public class AlarmService extends Service {
         
         showNotification();
 
-        if (System.currentTimeMillis() > intent.getLongExtra(AlarmManager.CANCEL_TIME_DATA, -1)) {
-            AlarmManager.get().cancel();
+        if (System.currentTimeMillis() > intent.getLongExtra(AlarmStore.CANCEL_TIME_DATA, -1)) {
+            AlarmStore.get().cancel();
         }
 
         return super.onStartCommand(intent, flags, startId);

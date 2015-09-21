@@ -1,4 +1,4 @@
-package me.codethink.heyoffice;
+package me.codethink.heyoffice.ui;
 
 
 import android.app.Fragment;
@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import me.codethink.heyoffice.R;
 
 /**
  * Created by archie on 15/8/31.

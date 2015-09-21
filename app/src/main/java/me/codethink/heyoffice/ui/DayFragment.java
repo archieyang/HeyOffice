@@ -1,4 +1,4 @@
-package me.codethink.heyoffice;
+package me.codethink.heyoffice.ui;
 
 
 import android.app.Fragment;
@@ -20,6 +20,11 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.codethink.heyoffice.Alarm;
+import me.codethink.heyoffice.AlarmStore;
+import me.codethink.heyoffice.R;
+import rx.Subscription;
+import rx.functions.Action1;
 
 /**
  * Created by archie on 15/8/31.
@@ -33,17 +38,17 @@ public class DayFragment extends Fragment {
         TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
-                AlarmManager.get().addAlarm(hour, minute);
-                alarms.clear();
-                alarms.addAll(AlarmManager.get().getAlarmTime());
-                mAdapter.notifyDataSetChanged();
+                AlarmStore.get().addAlarm(hour, minute);
+
             }
         }, 3, 5, false);
         timePickerDialog.show(getFragmentManager(), "Show TimePickerDialog");
     }
 
     RecyclerView.Adapter mAdapter;
-    List<Alarm> alarms = new ArrayList<Alarm>();
+    List<Alarm> mAlarms = new ArrayList<Alarm>();
+
+    Subscription mSubscription = null;
 
     @Nullable
     @Override
@@ -52,7 +57,6 @@ public class DayFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         mAlarmList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        alarms.addAll(AlarmManager.get().getAlarmTime());
 
         mAdapter = new RecyclerView.Adapter(){
             @Override
@@ -62,12 +66,12 @@ public class DayFragment extends Fragment {
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
-                ((AlarmItemViewHolder) viewHolder).simpleText.setText(alarms.get(i).getFormattedAlarmTime());
+                ((AlarmItemViewHolder) viewHolder).simpleText.setText(mAlarms.get(i).getFormattedAlarmTime());
             }
 
             @Override
             public int getItemCount() {
-                return alarms.size();
+                return mAlarms.size();
             }
 
             final class AlarmItemViewHolder extends RecyclerView.ViewHolder {
@@ -82,9 +86,22 @@ public class DayFragment extends Fragment {
         };
         mAlarmList.setAdapter(mAdapter);
 
+        mSubscription = AlarmStore.get().getListObservable().subscribe(new Action1<List<Alarm>>() {
+            @Override
+            public void call(List<Alarm> alarms) {
+                mAlarms.clear();
+                mAlarms.addAll(alarms);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
         return view;
 
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mSubscription.unsubscribe();
+    }
 }
