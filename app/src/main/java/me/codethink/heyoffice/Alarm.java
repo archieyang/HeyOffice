@@ -16,7 +16,7 @@ public class Alarm implements Comparable<Alarm>{
     private final int mMinute;
     private final long timeInMillis;
 
-    public Alarm(AlarmDataItem alarmDataItem) {
+    private Alarm(AlarmDataItem alarmDataItem) {
         mHour = alarmDataItem.getHour();
         mMinute = alarmDataItem.getMinute();
 
@@ -27,6 +27,10 @@ public class Alarm implements Comparable<Alarm>{
         calendar.set(Calendar.SECOND, 0);
 
         timeInMillis = calendar.getTimeInMillis();
+    }
+
+    public static Alarm fromDataItem(AlarmDataItem alarmDataItem) {
+        return new Alarm(alarmDataItem);
     }
 
     public String getFormattedAlarmTime() {

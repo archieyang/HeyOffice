@@ -11,6 +11,9 @@ import java.util.List;
 import me.codethink.heyoffice.data.Database;
 import me.codethink.heyoffice.greendao.AlarmDataItem;
 import rx.Observable;
+import rx.Observer;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.subjects.BehaviorSubject;
 
 /**
@@ -29,7 +32,7 @@ public class AlarmStore {
     private AlarmStore(Context context) {
         mContext = context;
         mAlarmManager = (android.app.AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        
+
         refreshData();
     }
 
@@ -47,22 +50,34 @@ public class AlarmStore {
         Intent intent = new Intent(ALARM_ALERT_ACTION);
         PendingIntent sender = PendingIntent.getBroadcast(
                 mContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        mAlarmManager.set(android.app.AlarmManager.RTC_WAKEUP, new Alarm(alarmDataItem).getTimeInMillis(), sender);
+
+        mAlarmManager.set(android.app.AlarmManager.RTC_WAKEUP, Alarm.fromDataItem(alarmDataItem).getTimeInMillis(), sender);
 
         refreshData();
     }
 
     private void refreshData() {
-        List<AlarmDataItem> alarmDataItems = Database.get().getSession().getAlarmDataItemDao().queryBuilder().list();
-        List<Alarm> alarms = new ArrayList<Alarm>();
 
-        for (AlarmDataItem item : alarmDataItems) {
-            alarms.add(new Alarm(item));
-        }
+        Observable
+                .just(Database.get().getSession().getAlarmDataItemDao().queryBuilder().list())
+                .map(new Func1<List<AlarmDataItem>, List<Alarm>>() {
+                    @Override
+                    public List<Alarm> call(List<AlarmDataItem> alarmDataItems) {
+                        List<Alarm> alarms = new ArrayList<Alarm>();
+                        for (AlarmDataItem item : alarmDataItems) {
+                            alarms.add(Alarm.fromDataItem(item));
+                        }
 
-        Collections.sort(alarms);
-
-        mListBehaviorSubject.onNext(alarms);
+                        Collections.sort(alarms);
+                        return alarms;
+                    }
+                })
+                .subscribe(new Action1<List<Alarm>>() {
+                    @Override
+                    public void call(List<Alarm> alarms) {
+                        mListBehaviorSubject.onNext(alarms);
+                    }
+                });
     }
 
     public Observable<List<Alarm>> getListObservable() {
