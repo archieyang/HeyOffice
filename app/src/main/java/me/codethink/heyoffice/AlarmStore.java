@@ -60,24 +60,16 @@ public class AlarmStore {
 
         Observable
                 .just(Database.get().getSession().getAlarmDataItemDao().queryBuilder().list())
-                .map(new Func1<List<AlarmDataItem>, List<Alarm>>() {
-                    @Override
-                    public List<Alarm> call(List<AlarmDataItem> alarmDataItems) {
-                        List<Alarm> alarms = new ArrayList<Alarm>();
-                        for (AlarmDataItem item : alarmDataItems) {
-                            alarms.add(Alarm.fromDataItem(item));
-                        }
+                .map(alarmDataItems -> {
+                    List<Alarm> alarms = new ArrayList<Alarm>();
+                    for (AlarmDataItem item : alarmDataItems) {
+                        alarms.add(Alarm.fromDataItem(item));
+                    }
 
-                        Collections.sort(alarms);
-                        return alarms;
-                    }
+                    Collections.sort(alarms);
+                    return alarms;
                 })
-                .subscribe(new Action1<List<Alarm>>() {
-                    @Override
-                    public void call(List<Alarm> alarms) {
-                        mListBehaviorSubject.onNext(alarms);
-                    }
-                });
+                .subscribe(mListBehaviorSubject::onNext);
     }
 
     public Observable<List<Alarm>> getListObservable() {
