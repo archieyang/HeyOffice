@@ -74,12 +74,23 @@ public class DayFragment extends Fragment {
                 return mAlarms.size();
             }
 
-            final class AlarmItemViewHolder extends RecyclerView.ViewHolder {
+            final class AlarmItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
                 TextView simpleText;
 
                 public AlarmItemViewHolder(View itemView) {
                     super(itemView);
                     simpleText = (TextView) itemView.findViewById(R.id.item_text);
+
+                    itemView.setOnClickListener(this);
+                }
+
+                @Override
+                public void onClick(View view) {
+                    if (getAdapterPosition() >= 0) {
+                        mAlarms.get(getAdapterPosition()).delete();
+                        mAlarms.remove(getAdapterPosition());
+                        notifyItemRemoved(getAdapterPosition());
+                    }
                 }
             }
 

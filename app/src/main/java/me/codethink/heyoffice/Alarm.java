@@ -2,31 +2,31 @@ package me.codethink.heyoffice;
 
 import android.support.annotation.NonNull;
 
+import java.security.acl.LastOwnerException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import me.codethink.heyoffice.data.Database;
 import me.codethink.heyoffice.greendao.AlarmDataItem;
 
 /**
  * Created by archie on 15/9/18.
  */
 public class Alarm implements Comparable<Alarm>{
-    private final int mHour;
-    private final int mMinute;
-    private final long timeInMillis;
+    private final long mTimeInMillis;
+    private final AlarmDataItem mAlarmDataItem;
 
     private Alarm(AlarmDataItem alarmDataItem) {
-        mHour = alarmDataItem.getHour();
-        mMinute = alarmDataItem.getMinute();
 
+        mAlarmDataItem = alarmDataItem;
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.setTime(new Date());
-        calendar.set(Calendar.HOUR_OF_DAY, mHour);
-        calendar.set(Calendar.MINUTE, mMinute);
+        calendar.set(Calendar.HOUR_OF_DAY, alarmDataItem.getHour());
+        calendar.set(Calendar.MINUTE, alarmDataItem.getMinute());
         calendar.set(Calendar.SECOND, 0);
 
-        timeInMillis = calendar.getTimeInMillis();
+        mTimeInMillis = calendar.getTimeInMillis();
     }
 
     public static Alarm fromDataItem(AlarmDataItem alarmDataItem) {
@@ -35,31 +35,35 @@ public class Alarm implements Comparable<Alarm>{
 
     public String getFormattedAlarmTime() {
         StringBuilder stringBuilder = new StringBuilder();
-        if (mHour < 10) {
+        if (mAlarmDataItem.getHour() < 10) {
             stringBuilder.append("0");
         }
-        stringBuilder.append(mHour);
+        stringBuilder.append(mAlarmDataItem.getHour());
         stringBuilder.append(":");
-        if (mMinute < 10) {
+        if (mAlarmDataItem.getMinute() < 10) {
             stringBuilder.append("0");
         }
-        stringBuilder.append(mMinute);
+        stringBuilder.append(mAlarmDataItem.getMinute());
 
         return stringBuilder.toString();
     }
 
     public long getTimeInMillis() {
-        return timeInMillis;
+        return mTimeInMillis;
     }
 
     @Override
     public int compareTo(@NonNull Alarm alarm) {
-        if (timeInMillis < alarm.getTimeInMillis()) {
+        if (mTimeInMillis < alarm.getTimeInMillis()) {
             return  -1;
-        } else if (timeInMillis > alarm.getTimeInMillis()) {
+        } else if (mTimeInMillis > alarm.getTimeInMillis()) {
             return 1;
         } else {
             return 0;
         }
+    }
+
+    public void delete() {
+        Database.get().getSession().delete(mAlarmDataItem);
     }
 }
