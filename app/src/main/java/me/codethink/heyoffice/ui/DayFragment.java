@@ -97,13 +97,10 @@ public class DayFragment extends Fragment {
         };
         mAlarmList.setAdapter(mAdapter);
 
-        mSubscription = AlarmStore.get().getListObservable().subscribe(new Action1<List<Alarm>>() {
-            @Override
-            public void call(List<Alarm> alarms) {
+        mSubscription = AlarmStore.get().getListObservable().subscribe(alarms -> {
                 mAlarms.clear();
                 mAlarms.addAll(alarms);
                 mAdapter.notifyDataSetChanged();
-            }
         });
 
         return view;
