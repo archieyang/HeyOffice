@@ -23,6 +23,7 @@ import butterknife.OnClick;
 import me.codethink.heyoffice.Alarm;
 import me.codethink.heyoffice.AlarmStore;
 import me.codethink.heyoffice.R;
+import me.codethink.heyoffice.utils.ui.ItemClickSupport;
 import rx.Subscription;
 import rx.functions.Action1;
 
@@ -74,28 +75,25 @@ public class DayFragment extends Fragment {
                 return mAlarms.size();
             }
 
-            final class AlarmItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            final class AlarmItemViewHolder extends RecyclerView.ViewHolder {
                 TextView simpleText;
 
                 public AlarmItemViewHolder(View itemView) {
                     super(itemView);
                     simpleText = (TextView) itemView.findViewById(R.id.item_text);
-
-                    itemView.setOnClickListener(this);
-                }
-
-                @Override
-                public void onClick(View view) {
-                    if (getAdapterPosition() >= 0) {
-                        mAlarms.get(getAdapterPosition()).delete();
-                        mAlarms.remove(getAdapterPosition());
-                        notifyItemRemoved(getAdapterPosition());
-                    }
                 }
             }
 
         };
         mAlarmList.setAdapter(mAdapter);
+
+        ItemClickSupport.addTo(mAlarmList).setOnItemClickListener((recyclerView, position, v) -> {
+            if (position >= 0) {
+                mAlarms.get(position).delete();
+                mAlarms.remove(position);
+                mAdapter.notifyItemRemoved(position);
+            }
+        });
 
         mSubscription = AlarmStore.get().getListObservable().subscribe(alarms -> {
                 mAlarms.clear();
