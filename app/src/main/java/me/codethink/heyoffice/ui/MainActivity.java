@@ -1,6 +1,7 @@
 package me.codethink.heyoffice.ui;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -10,9 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import me.codethink.heyoffice.AlarmStore;
 import me.codethink.heyoffice.R;
 
@@ -26,6 +29,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.navigation_view)
     NavigationView mNavigationView;
+
+    @OnClick(R.id.settings)
+    public void onSettingsClicked() {
+        Intent intent = new Intent();
+        intent.setClass(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
