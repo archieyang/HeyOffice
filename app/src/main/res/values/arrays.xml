@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="setting_titles">
+        <item>上班时间</item>
+        <item>下班时间</item>
+        <item>午休时间</item>
+        <item>工作日</item>
+        <item>提醒间隔</item>
+    </string-array>
+</resources>
