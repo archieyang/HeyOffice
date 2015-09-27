@@ -25,7 +25,6 @@ import me.codethink.heyoffice.AlarmStore;
 import me.codethink.heyoffice.R;
 import me.codethink.heyoffice.utils.ui.ItemClickSupport;
 import rx.Subscription;
-import rx.functions.Action1;
 
 /**
  * Created by archie on 15/8/31.
@@ -59,32 +58,7 @@ public class DayFragment extends Fragment {
 
         mAlarmList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new RecyclerView.Adapter(){
-            @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-                return new AlarmItemViewHolder(LayoutInflater.from(DayFragment.this.getActivity()).inflate(R.layout.view_item, viewGroup, false));
-            }
-
-            @Override
-            public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
-                ((AlarmItemViewHolder) viewHolder).simpleText.setText(mAlarms.get(i).getFormattedAlarmTime());
-            }
-
-            @Override
-            public int getItemCount() {
-                return mAlarms.size();
-            }
-
-            final class AlarmItemViewHolder extends RecyclerView.ViewHolder {
-                TextView simpleText;
-
-                public AlarmItemViewHolder(View itemView) {
-                    super(itemView);
-                    simpleText = (TextView) itemView.findViewById(R.id.item_text);
-                }
-            }
-
-        };
+        mAdapter = new AlarmAdapter();
         mAlarmList.setAdapter(mAdapter);
 
         ItemClickSupport.addTo(mAlarmList).setOnItemClickListener((recyclerView, position, v) -> {
@@ -109,5 +83,37 @@ public class DayFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mSubscription.unsubscribe();
+    }
+
+    private class AlarmAdapter extends RecyclerView.Adapter<AlarmItemViewHolder> {
+
+        @Override
+        public AlarmItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new AlarmItemViewHolder(LayoutInflater.from(DayFragment.this.getActivity()).inflate(R.layout.view_item, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(AlarmItemViewHolder holder, int position) {
+            holder.bindData(mAlarms.get(position));
+        }
+
+        @Override
+        public int getItemCount() {
+            return mAlarms.size();
+        }
+    }
+
+    class AlarmItemViewHolder extends RecyclerView.ViewHolder {
+        @Bind(R.id.item_text)
+        TextView simpleText;
+
+        public AlarmItemViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+
+        public void bindData(Alarm alarm) {
+            simpleText.setText(alarm.getFormattedAlarmTime());
+        }
     }
 }
