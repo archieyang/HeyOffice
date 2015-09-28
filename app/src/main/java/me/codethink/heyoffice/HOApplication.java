@@ -12,5 +12,6 @@ public class HOApplication extends Application{
     public void onCreate() {
         super.onCreate();
         Database.start(this);
+        SettingStore.startup(this);
     }
 }

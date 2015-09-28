@@ -1,8 +1,6 @@
 package me.codethink.heyoffice.ui;
 
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,11 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import me.codethink.heyoffice.R;
+import me.codethink.heyoffice.SettingItem;
+import me.codethink.heyoffice.SettingStore;
 
 /**
  * Created by archie on 15/9/26.
@@ -27,7 +28,8 @@ public class SettingsActivity extends AppCompatActivity{
     @Bind(R.id.settings_list)
     RecyclerView mSettingsList;
 
-    String[] titles;
+    private List<SettingItem> mSettings = new ArrayList<SettingItem>();
+    private RecyclerView.Adapter<SettingsViewHolder> mAdapter = new SettingsAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +44,15 @@ public class SettingsActivity extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.settings);
 
-
-        // TODO: 15/9/27 Refactor to SettingManager
-        Resources res = getResources();
-        titles = res.getStringArray(R.array.setting_titles);
-
         mSettingsList.setLayoutManager(new LinearLayoutManager(this));
 
-        mSettingsList.setAdapter(new SettingsAdapter());
+        mSettingsList.setAdapter(mAdapter);
+
+        SettingStore.get().getSettingListObservable().subscribe(settings -> {
+            mSettings.clear();
+            mSettings.addAll(settings);
+            mAdapter.notifyDataSetChanged();
+        });
     }
 
 
@@ -62,13 +65,13 @@ public class SettingsActivity extends AppCompatActivity{
 
         @Override
         public void onBindViewHolder(SettingsViewHolder holder, int position) {
-            holder.nameText.setText(titles[position]);
-            holder.valueText.setText("未知");
+            holder.bindData(mSettings.get(position));
+
         }
 
         @Override
         public int getItemCount() {
-            return titles.length;
+            return mSettings.size();
         }
 
     }
@@ -83,6 +86,11 @@ public class SettingsActivity extends AppCompatActivity{
         public SettingsViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+
+        public void bindData(SettingItem settingItem)  {
+            nameText.setText(settingItem.getName());
+            valueText.setText(settingItem.getValue());
         }
     }
 
