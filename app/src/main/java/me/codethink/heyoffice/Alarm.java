@@ -8,6 +8,7 @@ import java.util.GregorianCalendar;
 
 import me.codethink.heyoffice.data.Database;
 import me.codethink.heyoffice.greendao.AlarmDataItem;
+import me.codethink.heyoffice.utils.ui.TimeUtils;
 
 /**
  * Created by archie on 15/9/18.
@@ -33,18 +34,7 @@ public class Alarm implements Comparable<Alarm>{
     }
 
     public String getFormattedAlarmTime() {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (mAlarmDataItem.getHour() < 10) {
-            stringBuilder.append("0");
-        }
-        stringBuilder.append(mAlarmDataItem.getHour());
-        stringBuilder.append(":");
-        if (mAlarmDataItem.getMinute() < 10) {
-            stringBuilder.append("0");
-        }
-        stringBuilder.append(mAlarmDataItem.getMinute());
-
-        return stringBuilder.toString();
+        return TimeUtils.hourMinuteToFormattedTime(mAlarmDataItem.getHour(), mAlarmDataItem.getMinute());
     }
 
     public long getTimeInMillis() {

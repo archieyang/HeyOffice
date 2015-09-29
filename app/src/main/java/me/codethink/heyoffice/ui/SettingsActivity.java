@@ -9,14 +9,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import me.codethink.heyoffice.AlarmStore;
 import me.codethink.heyoffice.R;
 import me.codethink.heyoffice.SettingItem;
 import me.codethink.heyoffice.SettingStore;
+import me.codethink.heyoffice.utils.ui.ItemClickSupport;
+import me.codethink.heyoffice.utils.ui.TimeUtils;
 
 /**
  * Created by archie on 15/9/26.
@@ -52,6 +58,28 @@ public class SettingsActivity extends AppCompatActivity{
             mSettings.clear();
             mSettings.addAll(settings);
             mAdapter.notifyDataSetChanged();
+        });
+
+        ItemClickSupport.addTo(mSettingsList).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                switch (mSettings.get(position).getType()) {
+                    case Time:
+                        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
+                                mSettings.get(position).setValue(TimeUtils.hourMinuteToFormattedTime(hour, minute));
+                                mAdapter.notifyItemChanged(position);
+                            }
+                        }, 3, 5, false);
+                        timePickerDialog.show(getFragmentManager(), "Show TimePickerDialog");
+                        break;
+                    case Text:
+                    default:
+                        break;
+
+                }
+            }
         });
     }
 
