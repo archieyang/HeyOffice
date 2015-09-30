@@ -2,6 +2,10 @@ package me.codethink.heyoffice;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +33,12 @@ public class SettingStore {
         List<SettingItem> settingItemList = new ArrayList<SettingItem>();
 
         for(String name : Arrays.asList(res.getStringArray(R.array.setting_titles))) {
-            settingItemList.add(new SettingItem(name, "value", Type.Time));
+            SettingItem settingItem = new SettingItem(name, "value", Type.Time);
+
+            Gson gson = new Gson();
+            // TODO: 15/9/30 load and save settings 
+            Log.v("ar_log", gson.toJson(settingItem));
+            settingItemList.add(settingItem);
         }
         mSettingListSubject.onNext(settingItemList);
     }
